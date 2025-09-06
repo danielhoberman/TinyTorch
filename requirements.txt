@@ -1,0 +1,8 @@
+colorama==0.4.6
+hypothesis==6.138.14
+mypy==1.17.1
+numba==0.61.2
+numpy==2.3.2
+pre-commit==4.3.0
+pytest==8.4.2
+pytest-env==1.1.5
