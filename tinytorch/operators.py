@@ -24,7 +24,7 @@ def add(a: float, b: float) -> float:
 
 def neg(a: float) -> float:
     """Negate the input number."""
-    return -a
+    return float(-a)
 
 
 def lt(a: float, b: float) -> bool:

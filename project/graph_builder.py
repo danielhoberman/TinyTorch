@@ -17,7 +17,6 @@ def build_expression(code):
 
 
 def build_tensor_expression(code):
-
     variables = {
         "x": tinytorch.tensor([[1.0, 2.0, 3.0]], requires_grad=True),
         "y": tinytorch.tensor([[1.0, 2.0, 3.0]], requires_grad=True),
