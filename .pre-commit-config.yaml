@@ -1,0 +1,27 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.12
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff
+        entry: ruff
+        language: system
+        types: [python]
+        args: ['check', '--fix', '--config=pyproject.toml', '--no-cache']
+      - id: mypy
+        name: mypy
+        entry: bash -c 'mypy --strict --confi=pyproject.toml .'
+        language: system
+        types: [python]
+        require_serial: true
+
+  # Doc linters
+  - repo: https://github.com/terrencepreilly/darglint
+    rev: v1.8.1
+    hooks:
+      - id: darglint

@@ -73,15 +73,7 @@ python --version
 python3 --version
 ```
 
-### 2. Create a Workspace
-
-We recommend a single workspace folder for all assignments:
-
-```bash
-mkdir workspace && cd workspace
-```
-
-### 3. Set Up a Virtual Environment
+### 2. Set Up a Virtual Environment
 
 This keeps dependencies isolated:
 
@@ -96,33 +88,40 @@ Your prompt should show `(venv)` if activation worked.
 
 See the [venv docs](https://docs.python.org/3/library/venv.html) for more info.
 
+Absolutely! Since we’ve switched to a `pyproject.toml` with editable install and optional extras, we can simplify and modernize that section. Here’s the updated version for your TinyTorch README:
+
+---
+
 ### 4. Clone & Install
 
-Clone your forked TinyTorch repo and install requirements:
+Clone your forked TinyTorch repo:
 
 ```bash
-git clone https://github.com/<your-username>/tinytorch.git
+git clone https://github.com/your-username/tinytorch.git
 cd tinytorch
-python -m pip install -r requirements.txt
-python -m pip install -r requirements.extra.txt
-python -m pip install -Ue .
 ```
 
-For Anaconda users, you may also need:
+Install TinyTorch in editable mode:
 
 ```bash
-conda install llvmlite
+# Install core TinyTorch
+python -m pip install -Ue .
+
+# Optionally, install all extras (dev tools, ML, visualization, datasets, web)
+pip install -Ue ".[dev,visualization,datasets,web,ml]"
 ```
+
+---
 
 ### 5. Verify Installation
 
 Run Python and check that the library imports:
 
 ```python
-import minitorch
+import tinytorch
 ```
 
-If no error appears, you are ready to start implementing!
+If no error appears, you are ready to start implementing TinyTorch assignments!
 
 ---
 
@@ -131,7 +130,6 @@ If no error appears, you are ready to start implementing!
 TinyTorch is designed to be:
 
 - **Readable:** Every line is easy to understand, even for newcomers.
-- **Incremental:** Each assignment builds upon the last.
 - **Educational:** The goal is mastery, not speed.
 
 ---
