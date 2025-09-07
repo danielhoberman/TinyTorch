@@ -15,7 +15,7 @@ repos:
         args: ['check', '--fix', '--config=pyproject.toml', '--no-cache']
       - id: mypy
         name: mypy
-        entry: bash -c 'mypy --strict --confi=pyproject.toml .'
+        entry: bash -c 'mypy --strict --config=pyproject.toml .'
         language: system
         types: [python]
         require_serial: true

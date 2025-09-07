@@ -158,13 +158,46 @@ class Scalar:
         return self.history.inputs
 
     def chain_rule(self, d_output: Any) -> Iterable[Tuple[Variable, Any]]:
+        """
+        Applies the chain rule to propagate gradients backward through this Scalar.
+
+        This function performs one step of backpropagation for the current node:
+        - Retrieves the function, context, and inputs that produced this Scalar
+        during the forward pass.
+        - Calls the stored function's `_backward` method with the upstream gradient
+        (`d_output`) to compute local gradients with respect to each input.
+        - Pairs each input with its corresponding gradient and filters out constants
+        (non-Scalar values or Scalars that do not require gradients).
+        - Returns a list of `(input, gradient)` pairs, which higher-level code can
+        use to continue backpropagating through the computation graph.
+
+        Parameters
+        ----------
+        d_output : Any
+            The gradient of the output of this Scalar with respect to the loss
+            (∂L/∂self), often coming from the next node in the backward pass.
+
+        Returns
+        -------
+        Iterable[Tuple[Variable, Any]]
+            A list of `(input, local_gradient)` tuples, containing only inputs that
+            require gradients. Each tuple represents ∂L/∂input for one of the
+            Scalar's inputs.
+        """
+        results = []
+
         h = self.history
         assert h is not None
         assert h.last_fn is not None
         assert h.ctx is not None
 
-        # TODO: Implement for Task 1.3.
-        raise NotImplementedError("Need to implement for Task 1.3")
+        local_grads = h.last_fn._backward(h.ctx, d_output)
+
+        for inp, grad in zip(h.inputs, local_grads):
+            if isinstance(inp, Scalar):
+                results.append((inp, grad))
+
+        return results
 
     def backward(self, d_output: Optional[float] = None) -> None:
         """
