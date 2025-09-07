@@ -103,6 +103,7 @@ def relu_back(a: float, grad: float) -> float:
     """
     return grad if a > 0 else 0.0
 
+
 def sigmoid_back(a: float, grad: float) -> float:
     """
     Compute the gradient of the Sigmoid function for backpropagation.
@@ -121,8 +122,6 @@ def sigmoid_back(a: float, grad: float) -> float:
     """
     s = sigmoid(a)
     return grad * s * (1 - s)  # ✅ multiply, do not divide
-
-
 
 
 # ## Task 0.3
