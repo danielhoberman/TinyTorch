@@ -1,6 +1,7 @@
 import random
 from typing import Callable, List, Tuple
 
+import math
 import pytest
 from hypothesis import given
 from hypothesis.strategies import lists
@@ -24,6 +25,7 @@ from tinytorch.operators import (
     relu,
     relu_back,
     sigmoid,
+    sigmoid_back
 )
 
 from .strategies import assert_close, small_floats
@@ -59,6 +61,14 @@ def test_relu_back(a: float, b: float) -> None:
         assert relu_back(a, b) == b
     if a < 0:
         assert relu_back(a, b) == 0.0
+
+@pytest.mark.task0_1
+@given(small_floats, small_floats)
+def test_sigmoid_back(a: float, b: float) -> None:
+    sig = 1 / (1 + math.exp(-a))        # sigmoid
+    expected = b * sig * (1 - sig)      # ✅ correct derivative
+    actual = sigmoid_back(a, b)
+    assert math.isclose(actual, expected, rel_tol=1e-9)
 
 
 @pytest.mark.task0_1
