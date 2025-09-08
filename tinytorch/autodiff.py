@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any, Iterable, Tuple
 
@@ -77,16 +78,16 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
     def dfs(v: Variable):
         if v.unique_id in visited:
             return
+        if not v.is_leaf():
+            for parent in v.parents:
+                if not parent.is_constant():
+                    dfs(parent)
+
         visited.add(v.unique_id)
-        for parent in v.parents:
-            if not parent.is_constant():
-                dfs(parent)
         order.append(v)
 
-    top_sort = dfs(variable)
-    return top_sort[::-1] # reverse to get parent first
-
-    
+    dfs(variable)
+    return order[::-1]
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
@@ -100,8 +101,18 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
 
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
-    # TODO: Implement for Task 1.4.
-    raise NotImplementedError("Need to implement for Task 1.4")
+
+    sorted = topological_sort(variable)
+
+    d_dict = defaultdict(float)
+    d_dict[variable.unique_id] = deriv
+    for var in sorted:
+        d = d_dict[var.unique_id]
+        if not var.is_leaf():
+            for v, d_part in var.chain_rule(d):
+                d_dict[v.unique_id] += d_part
+        else:
+            var.accumulate_derivative(d)
 
 
 @dataclass
