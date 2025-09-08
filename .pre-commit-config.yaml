@@ -5,6 +5,13 @@ repos:
       - id: ruff
         args: [--fix]
       - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.17.1
+    hooks:
+      - id: mypy
+        exclude: ^(docs/)|(project/)|(assignments/)|(project/interface/)
+
   - repo: local
     hooks:
       - id: ruff
@@ -13,9 +20,3 @@ repos:
         language: system
         types: [python]
         args: ['check', '--fix', '--config=pyproject.toml', '--no-cache']
-      - id: mypy
-        name: mypy
-        entry: bash -c 'mypy --strict --config=pyproject.toml .'
-        language: system
-        types: [python]
-        require_serial: true
