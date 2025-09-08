@@ -27,14 +27,14 @@ def neg(a: float) -> float:
     return float(-a)
 
 
-def lt(a: float, b: float) -> bool:
+def lt(a: float, b: float) -> float:
     """Return True if a < b, else False."""
-    return a < b
+    return 1.0 if a < b else 0.0
 
 
-def eq(a: float, b: float) -> bool:
+def eq(a: float, b: float) -> float:
     """Return True if a == b, else False (strict equality)."""
-    return a == b
+    return 1.0 if a == b else 0.0
 
 
 def max(a: float, b: float) -> float:
