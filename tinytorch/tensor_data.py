@@ -95,8 +95,12 @@ def broadcast_index(
     Returns:
         None
     """
-    # TODO: Implement for Task 2.2.
-    raise NotImplementedError("Need to implement for Task 2.2")
+    offset = len(big_shape) - len(shape)
+    for i in range(len(shape)):
+        if shape[i] == 1:
+            out_index[i] = 0
+        else:
+            out_index[i] = big_index[i + offset]
 
 
 def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
@@ -113,8 +117,23 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
     Raises:
         IndexingError : if cannot broadcast
     """
-    # TODO: Implement for Task 2.2.
-    raise NotImplementedError("Need to implement for Task 2.2")
+
+    result_shape = []
+
+    for i in range(1, max(len(shape1), len(shape2))):
+        dim1 = shape1[-i] if i <= len(shape1) else 1
+        dim2 = shape2[-i] if i <= len(shape2) else 1
+
+        if dim1 == dim2:
+            result_shape.append(dim1)
+        elif dim1 == 1:
+            result_shape.append(dim2)
+        elif dim2 == 1:
+            result_shape.append(dim1)
+        else:
+            IndexingError(f"Cannot broadcast shape1: {shape1} with {shape2} ")
+
+    return result_shape
 
 
 def strides_from_shape(shape: UserShape) -> UserStrides:
@@ -156,7 +175,7 @@ class TensorData:
         self._shape = array(shape)
         self.strides = strides
         self.dims = len(strides)
-        self.size = int(prod(shape))
+        self.size = int(prod(list(shape)))
         self.shape = shape
         assert len(self._storage) == self.size
 
