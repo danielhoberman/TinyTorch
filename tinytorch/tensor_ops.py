@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING, Any, Callable, Optional, Type
 
+import numpy as np
 from typing_extensions import Protocol
 
 from . import operators
-from .tensor_data import (
-    shape_broadcast,
-)
+from .tensor_data import shape_broadcast, to_index, index_to_position, broadcast_index
 
 if TYPE_CHECKING:
     from .tensor import Tensor
@@ -262,8 +262,24 @@ def tensor_map(fn: Callable[[float], float]) -> Any:
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError("Need to implement for Task 2.3")
+        ndim = len(out_shape)
+        index = np.zeros(ndim, dtype=int)  # reusable buffer
+        in_index = np.zeros(len(in_shape), dtype=int)
+        size = math.prod(out_shape)
+
+        for ordinal in range(size):
+            # Convert ordinal to multi-dimensional index
+            to_index(ordinal, out_shape, index)
+
+            # Map output index to input index using broadcasting
+            broadcast_index(index, out_shape, in_shape, in_index)
+
+            # Convert to flat positions
+            out_pos = index_to_position(index, out_strides)
+            in_pos = index_to_position(in_index, in_strides)
+
+            # Apply unary function
+            out[out_pos] = fn(in_storage[in_pos])
 
     return _map
 
@@ -312,8 +328,27 @@ def tensor_zip(fn: Callable[[float, float], float]) -> Any:
         b_shape: Shape,
         b_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError("Need to implement for Task 2.3")
+        ndim = len(out_shape)
+        index = np.zeros(ndim, dtype=int)  # reusable buffer
+        a_index = np.zeros(len(a_shape), dtype=int)
+        b_index = np.zeros(len(b_shape), dtype=int)
+        size = math.prod(out_shape)
+
+        for ordinal in range(size):
+            # Convert ordinal to multi-dimensional index
+            to_index(ordinal, out_shape, index)
+
+            # Map to input indices using broadcasting
+            broadcast_index(index, out_shape, a_shape, a_index)
+            broadcast_index(index, out_shape, b_shape, b_index)
+
+            # Convert to flat positions
+            out_pos = index_to_position(index, out_strides)
+            a_pos = index_to_position(a_index, a_strides)
+            b_pos = index_to_position(b_index, b_strides)
+
+            # Apply binary function
+            out[out_pos] = fn(a_storage[a_pos], b_storage[b_pos])
 
     return _zip
 
@@ -348,8 +383,31 @@ def tensor_reduce(fn: Callable[[float, float], float]) -> Any:
         a_strides: Strides,
         reduce_dim: int,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError("Need to implement for Task 2.3")
+        ndim = len(out_shape)
+        reduce_len = a_shape[reduce_dim]
+        step = a_strides[reduce_dim]
+
+        index = np.zeros(ndim, dtype=int)  # single reusable buffer
+        size = math.prod(out_shape)
+
+        for ordinal in range(size):
+            # Compute multi-dimensional index
+            to_index(ordinal, out_shape, index)
+
+            # Compute base position in input storage
+            index[reduce_dim] = 0
+            base_pos = index_to_position(index, a_strides)
+
+            # Accumulate along reduce_dim using stride stepping
+            acc = a_storage[base_pos]
+            pos = base_pos + step
+            for _ in range(1, reduce_len):
+                acc = fn(acc, a_storage[pos])
+                pos += step
+
+            # Store result in output
+            out_pos = index_to_position(index, out_strides)
+            out[out_pos] = acc
 
     return _reduce
 
