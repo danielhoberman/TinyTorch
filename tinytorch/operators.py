@@ -171,7 +171,9 @@ def zipWith(
     return [func(a, b) for a, b in zip(item1, item2)]
 
 
-def reduce(fn: Callable[[R, T], R], start: R) -> Callable[[Iterable[T]], R]:
+def reduce(
+    fn: Callable[[float, float], float], start: float
+) -> Callable[[Iterable[float]], float]:
     r"""Higher-order reduce.
 
     Args:
@@ -186,7 +188,9 @@ def reduce(fn: Callable[[R, T], R], start: R) -> Callable[[Iterable[T]], R]:
 
     """
 
-    def _reduce(ls: Iterable[T], fn: Callable[[R, T], R], start: R) -> R:
+    def _reduce(
+        ls: Iterable[T], fn: Callable[[float, float], float], start: float
+    ) -> float:
         accumulator = start
         for i in ls:
             accumulator = fn(accumulator, i)
