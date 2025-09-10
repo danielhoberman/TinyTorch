@@ -34,25 +34,11 @@ class Linear(tinytorch.Module):
         self.out_size = out_size
 
     def forward(self, x: tinytorch.Tensor):
-        # x: (batch, in_size)
-        # weights: (in_size, out_size)
-        # bias: (out_size,)
-
-        # Reshape x to (batch, in_size, 1) so it can broadcast against weights.
-        x = x.view(*x.shape, 1)
-
-        # Reshape weights to (1, in_size, out_size) so they broadcast across the batch dimension.
-        w = self.weights.value.view(1, *self.weights.shape)
-
-        # Elementwise multiply: produces (batch, in_size, out_size),
-        # where each input feature is multiplied by its corresponding weight.
-        out = x * w
-
-        # Sum over input dimension to get (batch, out_size) — equivalent to X @ W.
-        out = out.sum(1)
-
-        # Add bias (broadcast across all batch rows).
-        return out + self.bias.value
+        batch, in_size = x.shape
+        return (
+            self.weights.value.view(1, in_size, self.out_size)
+            * x.view(batch, in_size, 1)
+        ).sum(1).view(batch, self.out_size) + self.bias.value.view(self.out_size)
 
 
 def default_log_fn(epoch, total_loss, correct, losses):
