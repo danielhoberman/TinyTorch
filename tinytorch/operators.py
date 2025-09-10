@@ -124,6 +124,20 @@ def sigmoid_back(a: float, grad: float) -> float:
     return grad * s * (1 - s)  # ✅ multiply, do not divide
 
 
+def exp_back(a: float, grad: float) -> float:
+    """
+    Backward gradient for exp(a).
+
+    Parameters:
+        a (float): Input value.
+        grad (float): Incoming gradient.
+
+    Returns:
+        float: Gradient with respect to `a`.
+    """
+    return grad * exp(a)
+
+
 # ## Task 0.3
 
 # Small practice library of elementary higher-order functions.

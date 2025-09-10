@@ -8,6 +8,7 @@ import numpy as np
 import numpy.typing as npt
 from numpy import array, float64
 from typing_extensions import TypeAlias
+from itertools import zip_longest
 
 from .operators import prod
 
@@ -118,22 +119,21 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
         IndexingError : if cannot broadcast
     """
 
-    result_shape = []
+    result = []
 
-    for i in range(1, max(len(shape1), len(shape2))):
-        dim1 = shape1[-i] if i <= len(shape1) else 1
-        dim2 = shape2[-i] if i <= len(shape2) else 1
-
-        if dim1 == dim2:
-            result_shape.append(dim1)
-        elif dim1 == 1:
-            result_shape.append(dim2)
-        elif dim2 == 1:
-            result_shape.append(dim1)
+    # Align shapes from right, fill missing dims with 1
+    for dim_a, dim_b in zip_longest(reversed(shape1), reversed(shape2), fillvalue=1):
+        if dim_a == dim_b:
+            result.append(dim_a)
+        elif dim_a == 1:
+            result.append(dim_b)
+        elif dim_b == 1:
+            result.append(dim_a)
         else:
-            IndexingError(f"Cannot broadcast shape1: {shape1} with {shape2} ")
+            raise IndexingError(f"Cannot broadcast shape1: {shape1} with {shape2}")
 
-    return result_shape
+    # Reverse back to proper order
+    return tuple(reversed(result))
 
 
 def strides_from_shape(shape: UserShape) -> UserStrides:
