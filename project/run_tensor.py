@@ -1,5 +1,5 @@
 """
-Be sure you have minitorch installed in you Virtual Env.
+Be sure you have tinytorch installed in you Virtual Env.
 >>> pip install -Ue .
 """
 

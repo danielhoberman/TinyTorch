@@ -121,7 +121,7 @@ def sigmoid_back(a: float, grad: float) -> float:
         Gradient of the loss with respect to `a`.
     """
     s = sigmoid(a)
-    return grad * s * (1 - s)  # ✅ multiply, do not divide
+    return grad * s * (1.0 - s)  # ✅ multiply, do not divide
 
 
 def exp_back(a: float, grad: float) -> float:

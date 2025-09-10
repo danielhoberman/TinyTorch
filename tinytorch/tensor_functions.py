@@ -188,9 +188,10 @@ class LT(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
-        a, b = ctx.saved_values
-        # Gradient of comparison is zero everywhere
-        return grad_output.zeros(a.shape), grad_output.zeros(b.shape)
+        return (
+            grad_output.zeros(grad_output.shape),
+            grad_output.zeros(grad_output.shape),
+        )
 
 
 class EQ(Function):
@@ -200,9 +201,11 @@ class EQ(Function):
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
-        a, b = ctx.saved_values
         # Gradient of comparison is zero everywhere
-        return grad_output.zeros(a.shape), grad_output.zeros(b.shape)
+        return (
+            grad_output.zeros(grad_output.shape),
+            grad_output.zeros(grad_output.shape),
+        )
 
 
 class IsClose(Function):
@@ -292,7 +295,7 @@ def zeros(shape: UserShape, backend: TensorBackend = SimpleBackend) -> Tensor:
         new tensor
     """
     return tinytorch.Tensor.make(
-        [0] * int(operators.prod(shape)), shape, backend=backend
+        [0] * int(operators.prod(list(shape))), shape, backend=backend
     )
 
 
@@ -312,7 +315,7 @@ def rand(
     Returns:
         :class:`Tensor` : new tensor
     """
-    vals = [random.random() for _ in range(int(operators.prod(shape)))]
+    vals = [random.random() for _ in range(int(operators.prod(list(shape))))]
     tensor = tinytorch.Tensor.make(vals, shape, backend=backend)
     tensor.requires_grad_(requires_grad)
     return tensor

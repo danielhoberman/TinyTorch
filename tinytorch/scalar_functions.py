@@ -111,7 +111,7 @@ class Mul(ScalarFunction):
         (a, b) = ctx.saved_values
         grad_a = d_output * b
         grad_b = d_output * a
-        return (grad_a, grad_b)
+        return grad_a, grad_b
 
 
 class Inv(ScalarFunction):
@@ -179,7 +179,7 @@ class Exp(ScalarFunction):
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
         (a,) = ctx.saved_values
-        return d_output * operators.exp(a)
+        return operators.exp_back(a, d_output)
 
 
 class LT(ScalarFunction):
